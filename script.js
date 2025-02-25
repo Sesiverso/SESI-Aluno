@@ -18,6 +18,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Função para verificar login
+// Função para verificar login
 async function verificarLogin() {
     // Pega os valores dos campos de entrada
     const nome = document.getElementById("nome").value.trim();
