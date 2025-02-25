@@ -1,5 +1,4 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // Configuração do Firebase
@@ -15,46 +14,42 @@ const firebaseConfig = {
 
 // Inicializa Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Função para verificar se o usuário é aluno ou professor
-async function verificarTipoUsuario(email) {
-    const colecoes = ["Alunos", "professores"];
-    for (const colecao of colecoes) {
-        const querySnapshot = await getDocs(collection(db, "usuarios", colecao));
-        for (const doc of querySnapshot.docs) {
-            if (doc.data().email === email) {
-                return doc.data().tipo; // Retorna 'aluno' ou 'professor'
-            }
-        }
-    }
-    return null; // Retorna null se não encontrar
-}
-
-// Função de Login
+// Função para verificar o login
 async function login() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const erro = document.getElementById("erro");
 
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+    const alunosRef = collection(db, "Alunos");
+    const snapshot = await getDocs(alunosRef);
 
-        // Verifica se é aluno ou professor
-        const tipo = await verificarTipoUsuario(email);
-        if (tipo === "aluno") {
-            window.location.href = "aluno.html";
-        } else if (tipo === "professor") {
-            window.location.href = "professor.html";
-        } else {
-            erro.innerText = "Tipo de usuário não encontrado.";
+    let userFound = false;
+
+    snapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.email === email) {
+            userFound = true;
+            if (data.senha === password) {
+                sessionStorage.setItem("turmas", data.turmas);
+                if (data.tipo === "aluno") {
+                    window.location.href = "aluno.html";
+                } else if (data.tipo === "professor") {
+                    window.location.href = "professor.html";
+                } else {
+                    erro.innerText = "Tipo de usuário inválido.";
+                }
+            } else {
+                erro.innerText = "Senha incorreta.";
+            }
         }
-    } catch (error) {
-        erro.innerText = "Erro no login: " + error.message;
+    });
+
+    if (!userFound) {
+        erro.innerText = "Usuário não encontrado.";
     }
 }
 
-// Expor a função login para ser chamada no HTML
+// Expor função global para HTML
 window.login = login;
