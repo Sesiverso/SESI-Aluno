@@ -1,5 +1,6 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// Importa Firebase
+import { initializeApp } from "firebase/app";
+import { getFirestore, doc, getDoc } from "firebase/firestore"; 
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -12,52 +13,100 @@ const firebaseConfig = {
     measurementId: "G-PK6BFBT56B"
 };
 
-// Inicializa Firebase
+// Inicializa Firebase e Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Função para verificar login
-async function login() {
+async function verificarLogin() {
+    // Pega os valores dos campos de entrada
     const nome = document.getElementById("nome").value.trim();
     const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const erro = document.getElementById("erro");
+    const senha = document.getElementById("senha").value.trim();
 
-    if (!nome || !email || !password) {
-        erro.innerText = "Preencha todos os campos!";
+    // Verifica se todos os campos foram preenchidos
+    if (!nome || !email || !senha) {
+        alert("Por favor, preencha todos os campos.");
         return;
     }
 
-    // Caminho correto: Alunos/aluno1/(Nome do Aluno)
-    const alunoRef = doc(db, "Alunos", "aluno1", nome);
-    const alunoSnap = await getDoc(alunoRef);
+    try {
+        // Busca o documento do usuário no Firestore
+        const docRef = doc(db, "Alunos", "aluno1", nome); // Caminho correto
+        const docSnap = await getDoc(docRef);
 
-    if (alunoSnap.exists()) {
-        const data = alunoSnap.data();
-        if (data.email === email) {
-            if (data.senha === password) {
-                sessionStorage.setItem("turmas", data.turmas);
-                sessionStorage.setItem("nome", nome);
+        if (docSnap.exists()) {
+            const dados = docSnap.data();
 
-                // Redireciona com base na turma
-                const turma = data.turmas.toLowerCase().replace(" ", "");
-                if (data.tipo === "aluno") {
-                    window.location.href = `${turma}aluno.html`;
-                } else if (data.tipo === "professor") {
-                    window.location.href = `${turma}prof.html`;
-                } else {
-                    erro.innerText = "Tipo de usuário inválido.";
+            // Verifica email e senha
+            if (dados.email === email && dados.senha === senha) {
+                alert("Login bem-sucedido!");
+
+                // Redireciona com base no tipo e na turma
+                if (dados.tipo === "aluno") {
+                    redirecionarAluno(dados.turmas);
+                } else if (dados.tipo === "professor") {
+                    redirecionarProfessor(dados.turmas);
                 }
             } else {
-                erro.innerText = "Senha incorreta.";
+                alert("Email ou senha incorretos!");
             }
         } else {
-            erro.innerText = "E-mail incorreto.";
+            alert("Usuário não encontrado!");
         }
-    } else {
-        erro.innerText = "Aluno não encontrado.";
+    } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+        alert("Erro ao acessar o banco de dados.");
     }
 }
 
-// Expor função global para HTML
-window.login = login;
+// Função para redirecionar alunos
+function redirecionarAluno(turma) {
+    const turmas = {
+        "1 ano": "1anoaluno.html",
+        "2 ano": "2anoaluno.html",
+        "3 ano": "3anoaluno.html",
+        "4 ano": "4anoaluno.html",
+        "5 ano": "5anoaluno.html",
+        "6 ano": "6anoaluno.html",
+        "7 ano": "7anoaluno.html",
+        "8 ano": "8anoaluno.html",
+        "9 ano": "9anoaluno.html",
+        "1 ano médio": "1anomedioaluno.html",
+        "2 ano médio": "2anomedioaluno.html",
+        "3 ano médio": "3anomedioaluno.html"
+    };
+
+    if (turmas[turma]) {
+        window.location.href = turmas[turma];
+    } else {
+        alert("Turma não encontrada.");
+    }
+}
+
+// Função para redirecionar professores
+function redirecionarProfessor(turma) {
+    const turmas = {
+        "1 ano": "1anoprof.html",
+        "2 ano": "2anoprof.html",
+        "3 ano": "3anoprof.html",
+        "4 ano": "4anoprof.html",
+        "5 ano": "5anoprof.html",
+        "6 ano": "6anoprof.html",
+        "7 ano": "7anoprof.html",
+        "8 ano": "8anoprof.html",
+        "9 ano": "9anoprof.html",
+        "1 ano médio": "1anomedio.html",
+        "2 ano médio": "2anomedio.html",
+        "3 ano médio": "3anomedio.html"
+    };
+
+    if (turmas[turma]) {
+        window.location.href = turmas[turma];
+    } else {
+        alert("Turma não encontrada.");
+    }
+}
+
+// Adiciona o evento ao botão de login
+document.getElementById("loginBtn").addEventListener("click", verificarLogin);
