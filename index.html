@@ -5,17 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Importando Firebase do CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Login</h1>
         <input type="text" id="nome" placeholder="Digite seu nome">
         <input type="email" id="email" placeholder="Digite seu e-mail">
-        <input type="password" id="password" placeholder="Digite sua senha">
-        <button onclick="login()">Entrar</button>
+        <input type="password" id="senha" placeholder="Digite sua senha">
+        <button id="loginBtn">Entrar</button> <!-- Ajustado o id para 'loginBtn' -->
         <p id="erro"></p>
     </div>
 
+    <!-- Incluindo o script.js após o carregamento do DOM -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("loginBtn").addEventListener("click", verificarLogin);
+        });
+    </script>
     <script type="module" src="script.js"></script>
 </body>
 </html>
