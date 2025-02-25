@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -16,38 +16,46 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Função para verificar o login
+// Função para verificar login
 async function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const nome = document.getElementById("nome").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
     const erro = document.getElementById("erro");
 
-    const alunosRef = collection(db, "Alunos");
-    const snapshot = await getDocs(alunosRef);
+    if (!nome || !email || !password) {
+        erro.innerText = "Preencha todos os campos!";
+        return;
+    }
 
-    let userFound = false;
+    // Caminho correto: Alunos/aluno1/(Nome do Aluno)
+    const alunoRef = doc(db, "Alunos", "aluno1", nome);
+    const alunoSnap = await getDoc(alunoRef);
 
-    snapshot.forEach((doc) => {
-        const data = doc.data();
+    if (alunoSnap.exists()) {
+        const data = alunoSnap.data();
         if (data.email === email) {
-            userFound = true;
             if (data.senha === password) {
                 sessionStorage.setItem("turmas", data.turmas);
+                sessionStorage.setItem("nome", nome);
+
+                // Redireciona com base na turma
+                const turma = data.turmas.toLowerCase().replace(" ", "");
                 if (data.tipo === "aluno") {
-                    window.location.href = "aluno.html";
+                    window.location.href = `${turma}aluno.html`;
                 } else if (data.tipo === "professor") {
-                    window.location.href = "professor.html";
+                    window.location.href = `${turma}prof.html`;
                 } else {
                     erro.innerText = "Tipo de usuário inválido.";
                 }
             } else {
                 erro.innerText = "Senha incorreta.";
             }
+        } else {
+            erro.innerText = "E-mail incorreto.";
         }
-    });
-
-    if (!userFound) {
-        erro.innerText = "Usuário não encontrado.";
+    } else {
+        erro.innerText = "Aluno não encontrado.";
     }
 }
 
