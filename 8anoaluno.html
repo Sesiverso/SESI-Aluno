@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub do 8º Ano</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo de volta ao Hub do 8º Ano!</h1>
+        <p>Aqui você pode acessar suas turmas, atividades e muito mais.</p>
+        <button onclick="sair()">Sair</button>
+    </div>
+
+    <script>
+        function sair() {
+            sessionStorage.clear();
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>
