@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo, Professor!</h1>
+        <div id="turmas-container"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const turmas = sessionStorage.getItem("turmas");
+            const turmasContainer = document.getElementById("turmas-container");
+
+            if (turmas) {
+                const turmaArray = turmas.split(",");
+                turmaArray.forEach(turma => {
+                    const btn = document.createElement("button");
+                    btn.innerText = turma;
+                    btn.onclick = function () {
+                        const turmaFormatada = turma.replace(/\s/g, "").toLowerCase();
+                        window.location.href = turmaFormatada + "prof.html";
+                    };
+                    turmasContainer.appendChild(btn);
+                });
+            } else {
+                turmasContainer.innerHTML = "<p>Nenhuma turma disponível.</p>";
+            }
+        });
+    </script>
+</body>
+</html>
