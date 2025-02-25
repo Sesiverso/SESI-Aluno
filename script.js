@@ -1,6 +1,6 @@
 // Importa Firebase
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc } from "firebase/firestore"; 
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore"; 
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -31,11 +31,17 @@ async function verificarLogin() {
     }
 
     try {
-        // Busca o documento do usuário no Firestore
-        const docRef = doc(db, "Alunos", "aluno1", nome); // Caminho correto
-        const docSnap = await getDoc(docRef);
+        // Busca o aluno na coleção "Alunos" com o campo nome
+        const q = query(collection(db, "Alunos"), where("nome", "==", nome)); 
+        const querySnapshot = await getDocs(q);
 
-        if (docSnap.exists()) {
+        if (querySnapshot.empty) {
+            alert("Usuário não encontrado!");
+            return;
+        }
+
+        // Encontrar o aluno correspondente
+        querySnapshot.forEach((docSnap) => {
             const dados = docSnap.data();
 
             // Verifica email e senha
@@ -51,9 +57,8 @@ async function verificarLogin() {
             } else {
                 alert("Email ou senha incorretos!");
             }
-        } else {
-            alert("Usuário não encontrado!");
-        }
+        });
+
     } catch (error) {
         console.error("Erro ao buscar usuário:", error);
         alert("Erro ao acessar o banco de dados.");
@@ -110,3 +115,4 @@ function redirecionarProfessor(turma) {
 
 // Adiciona o evento ao botão de login
 document.getElementById("loginBtn").addEventListener("click", verificarLogin);
+er("click", verificarLogin);
