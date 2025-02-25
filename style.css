@@ -1,48 +1,39 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #00458F; /* Azul do SESI */
+    background-color: #002f6c;
     color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+    text-align: center;
 }
 
-.login-container {
-    background-color: #0071BC; /* Azul mais claro SESI */
+.container {
+    margin-top: 100px;
+    background-color: #005bac;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    text-align: center;
     width: 300px;
+    margin: auto;
+}
+
+input, button {
+    display: block;
+    width: 90%;
+    margin: 10px auto;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
 }
 
 input {
-    width: 90%;
-    padding: 10px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 5px;
+    background-color: white;
+    color: black;
 }
 
 button {
-    background-color: #FFDD00; /* Amarelo SESI */
+    background-color: #ffcc00;
     color: black;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
     cursor: pointer;
-    width: 100%;
-    font-size: 16px;
 }
 
 button:hover {
-    background-color: #FFC107;
-}
-
-#erro {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
+    background-color: #ffdd44;
 }
